@@ -4,12 +4,13 @@ from typing import List
 from schema import users as user_schema
 from models.users import User
 from database.connection import get_db
-from crud.crud_user import get_user_by_email,create_user,get_all_users,get_user_by_id
+from crud.crud_user import get_user_by_email,create_user,get_all_users,get_user_by_id,authenticate_user
+from core.security import create_access_token,verify_access_token
 
 router = APIRouter()
 
 
-#response_model what we sent back to client .response_model ==> pydantic model with orm_mode=True
+#response_model what we sent back to client .response_model ==> pydantic model with orm_mode=True(Schema ) 
 #UserCreate what we want payload as input for user create .Both are pydantic models
 
 
@@ -38,4 +39,17 @@ async def delete_user(user_id: int,db: Session = Depends(get_db),status_code=sta
     db.commit()
     return {"detail": "User deleted successfully"}
 
+
+@router.post("/user/token")
+async def user_login_route(user: user_schema.UserLogin, db: Session = Depends(get_db)):
+    print("User Login")
+    email=user.email
+    password=user.password
+    user=authenticate_user(db=db,email=email,password=password)
+    if not user:
+        raise  HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials", headers={"WWW-Authenticate": "Bearer"})
+    
+    user_payload={"user_id":user.id,"email":user.email}
+    access_token=create_access_token(data=user_payload)
+    return {"access_token": access_token, "token_type": "bearer"}
 
