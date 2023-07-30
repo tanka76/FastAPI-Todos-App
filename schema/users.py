@@ -6,6 +6,9 @@ from typing import Optional
 class UserBase(BaseModel):
     email: str
 
+class UserLogin(UserBase):
+    password: str
+
 class UserCreate(UserBase):
     email: str
     password: str

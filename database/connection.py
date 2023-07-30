@@ -13,7 +13,6 @@ load_dotenv(os.path.join(BASE_DIR,".env"))
 sys.path.append(BASE_DIR)
 
 
-# DATABASE_URL = "postgresql://postgres:postgres@localhost/todos-app-fastapi"
 DATABASE_URL = os.environ["DATABASE_URL"]
 
 engine = create_engine(
