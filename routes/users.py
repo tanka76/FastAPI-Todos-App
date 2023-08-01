@@ -1,4 +1,5 @@
 from fastapi import Depends,HTTPException,APIRouter,status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from typing import List
 from schema import users as user_schema
@@ -8,6 +9,7 @@ from crud.crud_user import get_user_by_email,create_user,get_all_users,get_user_
 from core.security import create_access_token,verify_access_token
 
 router = APIRouter()
+
 
 
 #response_model what we sent back to client .response_model ==> pydantic model with orm_mode=True(Schema ) 
@@ -53,3 +55,5 @@ async def user_login_route(user: user_schema.UserLogin, db: Session = Depends(ge
     access_token=create_access_token(data=user_payload)
     return {"access_token": access_token, "token_type": "bearer"}
 
+
+#create,update,delete todos (protected routes)
