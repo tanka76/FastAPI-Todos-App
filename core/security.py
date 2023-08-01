@@ -3,10 +3,13 @@ from typing import Optional
 from datetime import timedelta
 from datetime import datetime
 import time
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status,Depends
+from fastapi.security import OAuth2PasswordBearer
 from jose import jwt,JWTError
 # from database.database import Settings
 from passlib.context import CryptContext
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/token")
 
 ALGORITHM = "HS256"
 JWT_SECRET_KEY = "foo"
@@ -35,8 +38,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-def verify_access_token(token: str) -> dict:
-
+def verify_access_token(token: str = Depends(oauth2_scheme)) -> dict:
     try:
         data = jwt.decode(token, JWT_SECRET_KEY,
         algorithms=ALGORITHM)
@@ -58,3 +60,5 @@ def verify_access_token(token: str) -> dict:
         status_code=status.HTTP_400_BAD_REQUEST,
         detail="Invalid token"
         )
+
+
