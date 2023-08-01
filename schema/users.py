@@ -36,6 +36,19 @@ class TodoBase(BaseModel):
 class TodoCreate(TodoBase):
     pass
 
+
+class TodoList(TodoBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class TodoUpdate(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    is_completed: Optional[bool]
+
+
 class TodoSchema(TodoBase):
     id: int
     user:UserSchema
