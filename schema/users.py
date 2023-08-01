@@ -27,4 +27,18 @@ class UserSchema(UserBase):
         orm_mode = True
 
 
+#Todo Schema
+class TodoBase(BaseModel):
+    title: str
+    description: str
+    is_completed: bool = False
 
+class TodoCreate(TodoBase):
+    pass
+
+class TodoSchema(TodoBase):
+    id: int
+    user:UserSchema
+
+    class Config:
+        orm_mode = True

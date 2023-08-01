@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from typing import List
 from schema import users as user_schema
-from models.users import User
+from models.users import User,Todo
 from database.connection import get_db
 from crud.crud_user import get_user_by_email,create_user,get_all_users,get_user_by_id,authenticate_user
 from core.security import create_access_token,verify_access_token
@@ -57,3 +57,14 @@ async def user_login_route(user: user_schema.UserLogin, db: Session = Depends(ge
 
 
 #create,update,delete todos (protected routes)
+
+@router.post("/todo",response_model=user_schema.TodoSchema,status_code=201) 
+async def create_todo_route(todo: user_schema.TodoCreate, db: Session = Depends(get_db)):
+    print("Todo Create",todo.dict())
+    todo_data=todo.dict()
+    todo=Todo(title=todo_data.get('title'),description=todo_data.get('description'),owner_id=3)
+    db.add(todo)
+    db.commit()
+    db.refresh(todo)
+    return todo
+    
