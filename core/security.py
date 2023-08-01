@@ -9,12 +9,10 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt,JWTError
 # from database.database import Settings
 from passlib.context import CryptContext
+from conf.config import setting
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/token")
 
-ALGORITHM = "HS256"
-JWT_SECRET_KEY = "foo"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 #Create a CryptContext object to manage password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -33,16 +31,16 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=30)
+        expire = datetime.utcnow() + timedelta(minutes=300)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, setting.SECRET_KEY, algorithm=setting.ALGORITHM)
     return encoded_jwt
 
 
 def verify_access_token(token: str = Depends(oauth2_scheme)) -> dict:
     try:
-        data = jwt.decode(token, JWT_SECRET_KEY,
-        algorithms=ALGORITHM)
+        data = jwt.decode(token, setting.SECRET_KEY,
+        algorithms=setting.ALGORITHM)
         expire = data.get("exp")
         if expire is None:
             raise HTTPException(
