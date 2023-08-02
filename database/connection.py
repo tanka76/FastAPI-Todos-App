@@ -1,22 +1,13 @@
 import sys
-import psycopg2
-from fastapi import Depends
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from contextlib import contextmanager
 import os,sys
-from dotenv import load_dotenv
+from conf.config import setting
 
-BASE_DIR=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(BASE_DIR,".env"))
-sys.path.append(BASE_DIR)
-
-
-DATABASE_URL = os.environ["DATABASE_URL"]
 
 engine = create_engine(
-    DATABASE_URL
+    setting.DATABASE_URL
 )
 # engine = create_engine(
 #     DBSettings.SQLALCHEMY_DATABASE_URL, pool_size=10,
