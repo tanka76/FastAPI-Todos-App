@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from database.connection import SessionLocal
 from routes.users import router as user_router
-
 
 app = FastAPI()
 

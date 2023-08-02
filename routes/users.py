@@ -1,7 +1,7 @@
 from fastapi import Depends,HTTPException,APIRouter,status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List,Optional
 from schema import users as user_schema
 from models.users import User,Todo
 from database.connection import get_db
@@ -69,9 +69,9 @@ async def create_todo_route(todo: user_schema.TodoCreate, db: Session = Depends(
     
 # get all todos 
 @router.get("/todo",response_model=List[user_schema.TodoList]) 
-async def get_todo_route(db: Session = Depends(get_db),user_data:dict=Depends(get_current_user)):
+async def get_todo_route(db: Session = Depends(get_db),user_data:dict=Depends(get_current_user),skip:int=0,limit:int=10):
     user_id=user_data.get('user_id')
-    todos = db.query(Todo).filter(Todo.owner_id == user_id).all()
+    todos = db.query(Todo).filter(Todo.owner_id == user_id).limit(limit=limit).offset(skip).all()
     return todos
 
 #delete todo
